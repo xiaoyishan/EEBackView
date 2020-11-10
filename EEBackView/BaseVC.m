@@ -11,7 +11,7 @@
 
 @interface BaseVC ()
 @property (nonatomic,strong) WKWebView *webView;
-@property (nonatomic,strong) UILabel *toastView;
+//@property (nonatomic,strong) UILabel *toastView;
 
 @property (nonatomic,strong) EEBackView *backView;
 @end
@@ -20,15 +20,17 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    printf("viewWillAppear");
     
     // 在导航首页不展示这个
     BOOL isHidden = (self.navigationController.viewControllers.count == 1  && !self.presentingViewController);
     self.backView.hidden = isHidden;
     
-    __weak typeof(self) weakSelf = self;
-    [self.backView setGoBackBlock:^{
+    __block typeof(self) weakSelf = self;
+    self.backView.goBackBlock = ^{
         [weakSelf goBack];
-    }];
+    };
+
 }
 
 - (void)viewDidLoad {
@@ -43,23 +45,17 @@
         [self.webView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:self.webUrl]]];
         [self.view addSubview:self.webView];
     }
-    
-   
-    
-    
-    
-    
 
 }
 
 
 -(void)goBack{
     // 关闭各种异常的弹框,loading等
-    if (_toastView && self.toastView.hidden == NO) {
-        self.toastView.hidden = YES;
-    }
+//    if (_toastView && self.toastView.hidden == NO) {
+//        self.toastView.hidden = YES;
+//    }
     // 网页页面回退
-    else if (_webView && self.webView.canGoBack && self.webView.hidden == NO) {
+    if (_webView && self.webView.canGoBack && self.webView.hidden == NO) {
         [self.webView goBack];
     }
     // 导航栏回退
@@ -70,7 +66,23 @@
     else if (self.presentingViewController != nil) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }else{
-        // exit(0); // 程序终止
+        // ios13模态非全屏的处理
+        if(@available(iOS 13.0,*)){
+            UIViewController *topVC = [UIApplication sharedApplication].keyWindow.rootViewController;
+            if (topVC.presentedViewController) topVC = topVC.presentedViewController;
+            BaseVC *vc = (BaseVC*)topVC;
+            if ([topVC  isKindOfClass:[UINavigationController class]] &&
+                [(UINavigationController*)topVC viewControllers].count >1) {
+                vc = [(UINavigationController*)topVC viewControllers].lastObject;
+            }
+            
+            if (vc.webView.canGoBack) {
+                [vc.webView goBack];
+            }else if (vc.modalPresentationStyle != UIModalPresentationFullScreen) {
+                [vc.navigationController popViewControllerAnimated:YES];
+            }
+        }
+        
     }
 }
 
@@ -96,10 +108,11 @@
     }
     return _webView;
 }
--(UILabel*)toastView {
-    if (!_toastView) {
-        _toastView = [UILabel new];
-    }
-    return _toastView;
-}
+//-(UILabel*)toastView {
+//    if (!_toastView) {
+//        _toastView = [UILabel new];
+//    }
+//    return _toastView;
+//}
+
 @end

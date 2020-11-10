@@ -80,6 +80,9 @@ const static CGFloat EEBacklength = 100; // 触发返回事件的区间
         [generator prepare];
         [generator impactOccurred];
         self.goBackBlock();
+        if ([self.delegate respondsToSelector:@selector(goBack)]) {
+            [self.delegate goBack];
+        }
     }
     self.displayLink.paused = NO;
 }

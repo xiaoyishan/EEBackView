@@ -10,8 +10,15 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+@protocol gobackDelegate <NSObject>
+-(void)goBack;
+@end
+
 @interface EEBackView : UIView
 @property (nonatomic,copy) void(^goBackBlock)(void);
+
+@property(nonatomic,weak) id <gobackDelegate> delegate;
+
 @end
 
 NS_ASSUME_NONNULL_END
