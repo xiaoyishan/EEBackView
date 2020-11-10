@@ -1,2 +1,4 @@
 # EEBackView
 仿安卓侧滑返回,主要用于没有导航栏时的网页返回
+
+*在这份代码基类中的goBack示例代码中, iOS13之后的模态时使用非UIModalPresentationFullScreen模式下使用可能会无法正常返回

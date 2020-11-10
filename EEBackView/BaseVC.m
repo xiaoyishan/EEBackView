@@ -20,7 +20,6 @@
 
 -(void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    printf("viewWillAppear");
     
     // 在导航首页不展示这个
     BOOL isHidden = (self.navigationController.viewControllers.count == 1  && !self.presentingViewController);
@@ -66,7 +65,7 @@
     else if (self.presentingViewController != nil) {
         [self dismissViewControllerAnimated:YES completion:nil];
     }else{
-        // ios13模态非全屏的处理
+        // ios13模态非全屏的处理(某些情况下无法生效,模态时建议使用UIModalPresentationFullScreen模式)
         if(@available(iOS 13.0,*)){
             UIViewController *topVC = [UIApplication sharedApplication].keyWindow.rootViewController;
             if (topVC.presentedViewController) topVC = topVC.presentedViewController;

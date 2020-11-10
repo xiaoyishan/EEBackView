@@ -30,11 +30,13 @@
 -(void)goForward:(UIButton*)button{
     ViewController *vc = [ViewController new];
     if ([button.currentTitle isEqual:@"present"]) {
+        vc.modalPresentationStyle = UIModalPresentationFullScreen;
         [self presentViewController:vc animated:YES completion:nil];
     }else{
         if ([button.currentTitle isEqual:@"web"]) vc.webUrl = @"https://www.baidu.com";
         if (!self.navigationController) {
             UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:vc];
+            nav.modalPresentationStyle = UIModalPresentationFullScreen;
             [self presentViewController:nav animated:YES completion:nil];
         }else{
             [self.navigationController pushViewController:vc animated:YES];
