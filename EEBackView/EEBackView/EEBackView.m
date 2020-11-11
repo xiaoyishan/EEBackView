@@ -40,10 +40,6 @@ const static CGFloat EEBacklength = 100; // 触发返回事件的区间
     [self.layer addSublayer:_popLayer];
     [self addSubview:self.backImageView];
     
-    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(backAnimation)];
-    self.displayLink.paused = YES;
-    [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
-    
 }
 
 -(void)updatePath {
@@ -51,7 +47,7 @@ const static CGFloat EEBacklength = 100; // 触发返回事件的区间
     path.lineWidth = 0.0;
     path.lineCapStyle = kCGLineCapRound;
     path.lineJoinStyle = kCGLineJoinRound;
-    [path moveToPoint:CGPointMake(-1, pointYY)]; 
+    [path moveToPoint:CGPointMake(-1, pointYY)];
     [path addQuadCurveToPoint:CGPointMake(60*pointXX, pointYY+60) controlPoint:CGPointMake(-1, pointYY+40)];
     [path addQuadCurveToPoint:CGPointMake(60*pointXX, pointYY+100) controlPoint:CGPointMake(120*pointXX, pointYY+80)];
     [path addQuadCurveToPoint:CGPointMake(-1, pointYY+160) controlPoint:CGPointMake(-1, pointYY+120)];
@@ -84,13 +80,13 @@ const static CGFloat EEBacklength = 100; // 触发返回事件的区间
             [self.delegate goBack];
         }
     }
-    self.displayLink.paused = NO;
+    self.displayLink = [CADisplayLink displayLinkWithTarget:self selector:@selector(backAnimation)];
+    [self.displayLink addToRunLoop:[NSRunLoop currentRunLoop] forMode:NSRunLoopCommonModes];
 }
 
 -(void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event{
     CGPoint point = [(UITouch *)[touches anyObject] locationInView:self];
     pointYY = point.y-160/2;
-    self.backgroundColor = [UIColor clearColor];
     _backImageView.frame = CGRectMake(0, pointYY+70, 16, 16);
 }
 
@@ -108,7 +104,7 @@ const static CGFloat EEBacklength = 100; // 触发返回事件的区间
         [self updatePath];
         self.backImageView.alpha = (pointXX-0.18)*16;
     }else{
-        self.displayLink.paused = YES;
+        [self stopAnimation];
         self.backImageView.alpha = 0;
     }
 }
